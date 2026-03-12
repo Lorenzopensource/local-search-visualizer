@@ -30,7 +30,7 @@ const algorithms = [
     name: "Iterated Local Search",
     color: "#2f7fc1",
     summary:
-      "A local optimum is perturbed, then refined again. The trajectory alternates between local improvement and targeted jumps into new basins.",
+      "A local optimum is perturbed by controlled kicks, then refined again. The trajectory alternates between local improvement, nearby basin probing, and renewed descent.",
   },
   {
     id: "gls",
@@ -137,6 +137,18 @@ function selectDistinctOptima(peaks, count) {
   }
 
   return optima;
+}
+
+function findNearestDistinctOptimum(source, candidates) {
+  const filtered = candidates.filter((candidate) => distance(source, candidate) > 0.001);
+
+  if (filtered.length === 0) {
+    return source;
+  }
+
+  return filtered.reduce((best, candidate) =>
+    distance(source, candidate) < distance(source, best) ? candidate : best
+  );
 }
 
 function buildTerrain(mode) {
@@ -333,12 +345,22 @@ function buildSearchModel(model) {
     };
   });
 
-  const ilsStart = jitterPoint(chooseStartForOptimum(second, -2.5, 0.27), rng, 0.025);
-  const ilsJumpOne = jitterPoint(chooseStartForOptimum(first, 1.9, 0.19), rng, 0.02);
-  const ilsJumpTwo = jitterPoint(chooseStartForOptimum(third, -0.7, 0.17), rng, 0.02);
-  const ilsSegmentOne = buildClimbPath(ilsStart, second, 4, rng, 0.06);
-  const ilsSegmentTwo = buildClimbPath(ilsJumpOne, first, 4, rng, 0.05);
-  const ilsSegmentThree = buildClimbPath(ilsJumpTwo, third, 3, rng, 0.04);
+  const ilsHome = second;
+  const ilsNeighbor = findNearestDistinctOptimum(ilsHome, [first, third, fourth]);
+  const ilsStart = jitterPoint(chooseStartForOptimum(ilsHome, -2.5, 0.24), rng, 0.02);
+  const ilsJumpOne = jitterPoint(
+    interpolatePoint(ilsHome, ilsNeighbor, model.mode === "rugged" ? 0.12 : 0.08),
+    rng,
+    0.012
+  );
+  const ilsJumpTwo = jitterPoint(
+    interpolatePoint(ilsHome, ilsNeighbor, model.mode === "rugged" ? 0.28 : 0.22),
+    rng,
+    0.014
+  );
+  const ilsSegmentOne = buildClimbPath(ilsStart, ilsHome, 4, rng, 0.06);
+  const ilsSegmentTwo = buildClimbPath(ilsJumpOne, ilsHome, 3, rng, 0.035);
+  const ilsSegmentThree = buildClimbPath(ilsJumpTwo, ilsNeighbor, 4, rng, 0.04);
   const ilsPoints = [
     ...ilsSegmentOne,
     ilsJumpOne,
