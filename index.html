@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Local Search in Solution Space</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="layout">
+      <section class="hero">
+        <p class="eyebrow">Evolutionary Computing</p>
+        <h1>How local-search hybrids move through solution space</h1>
+        <p class="intro">
+          The landscape below is a stylized fitness surface with multiple local
+          optima. Each trajectory shows how a different algorithm explores,
+          jumps, samples, and improves candidate solutions.
+        </p>
+      </section>
+
+      <section class="workspace">
+        <div class="canvas-panel">
+          <div class="panel-head">
+            <div>
+              <p class="panel-label">Solution space</p>
+              <h2 id="active-title">All algorithms</h2>
+              <p class="space-status" id="space-status">Smooth landscape</p>
+            </div>
+            <div class="panel-actions">
+              <button id="randomize-space" class="secondary-button" type="button">
+                New Landscape
+              </button>
+              <button id="replay" type="button">Replay</button>
+            </div>
+          </div>
+          <canvas
+            id="landscape"
+            width="900"
+            height="620"
+            aria-label="Visualization of search trajectories over a multimodal solution space"
+          ></canvas>
+          <div class="legend" id="legend"></div>
+        </div>
+
+        <aside class="sidebar">
+          <div class="controls card">
+            <p class="panel-label">Landscape</p>
+            <div class="button-grid" id="terrain-buttons"></div>
+          </div>
+
+          <div class="controls card">
+            <p class="panel-label">Algorithms</p>
+            <div class="button-grid" id="algorithm-buttons"></div>
+          </div>
+
+          <article class="card">
+            <p class="panel-label">Behavior</p>
+            <h3 id="algorithm-name">All algorithms</h3>
+            <p id="algorithm-summary">
+              Compare the motion patterns: restarts, perturbation jumps,
+              population mixing, and model-guided sampling.
+            </p>
+          </article>
+
+          <article class="card">
+            <p class="panel-label">Reading the graph</p>
+            <ul class="reading-list">
+              <li>Brighter regions indicate higher fitness.</li>
+              <li>Soft ivory rings mark synthetic local optima.</li>
+              <li>Circles mark sampled or current solutions.</li>
+              <li>Lines connect the search path over time.</li>
+              <li>Dashed halos indicate population or model structure.</li>
+            </ul>
+          </article>
+        </aside>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
